@@ -22,6 +22,9 @@
         boot_volume: "{{ host_name }}_os"
         nics:
           - net-name: public
+        security_groups:
+          - Seed Box
+          - default
       register: example_server
 
     - name: get facts about the server (including its public v4 IP address)
