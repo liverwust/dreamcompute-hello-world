@@ -9,7 +9,7 @@
         name: "{{ host_name }}_os"
         state: present
         image: CentOS-7
-        size: 20
+        size: "{{ volume_size | default(20) }}"
       register: example_volume
 
     - name: launch an instance
