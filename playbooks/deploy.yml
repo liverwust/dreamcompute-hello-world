@@ -31,7 +31,7 @@
       wait_for: host={{ public_v4 }} port=22 state=started
 
 - hosts: web
-  sudo: True
+  become: True
 
   tasks:
 
@@ -51,7 +51,7 @@
       wait_for: host={{ public_v4 }} port=22 state=started
 
 - hosts: web
-  sudo: True
+  become: True
 
   vars:
     app_name: helloworld
