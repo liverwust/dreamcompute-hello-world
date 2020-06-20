@@ -6,18 +6,20 @@
 
     - name: launch an instance
       os_server:
-        name: hello-world
+        name: "{{ host_name }}"
         state: present
-        image: Ubuntu-14.04
-        flavor_ram: 2048
+        image: CentOS-7
+        flavor_ram: 4096
         key_name: "{{ key_name }}"
+        terminate_volume: yes
+        volume_size: 20
         nics:
           - net-name: public
       register: example_server
 
     - name: get facts about the server (including its public v4 IP address)
       os_server_facts:
-        server: hello-world
+        server: "{{ host_name }}"
       until: example_server.server.public_v4 != ""
       retries: 5
       delay: 10
