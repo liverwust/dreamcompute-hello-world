@@ -4,15 +4,22 @@
     ansible_python_interpreter: python
   tasks:
 
+    - name: initialize a volume
+      os_volume:
+        name: "{{ host_name }}_os"
+        state: present
+        image: CentOS-7
+        size: 20
+      register: example_volume
+
     - name: launch an instance
       os_server:
         name: "{{ host_name }}"
         state: present
-        image: CentOS-7
         flavor_ram: 4096
         key_name: "{{ key_name }}"
         terminate_volume: yes
-        volume_size: 20
+        boot_volume: "{{ host_name }}_os"
         nics:
           - net-name: public
       register: example_server
