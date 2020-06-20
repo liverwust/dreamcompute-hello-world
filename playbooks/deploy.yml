@@ -22,7 +22,8 @@
       retries: 5
       delay: 10
 
-    - set_fact: public_v4="{{ example_server.server.public_v4 }}"
+    - set_fact:
+        public_v4: "{{ example_server.server.public_v4 }}"
 
     - name: add the server to our ansible inventory
       add_host: hostname={{ public_v4 }} groups=web ansible_ssh_user=dhc-user ansible_ssh_private_key_file={{ private_key }}
