@@ -35,7 +35,7 @@
         public_v4: "{{ example_server.server.public_v4 }}"
 
     - name: add the server to our ansible inventory
-      add_host: hostname={{ public_v4 }} groups=web ansible_ssh_user=centos ansible_ssh_private_key_file={{ private_key }}
+      add_host: hostname={{ public_v4 }} groups=web ansible_ssh_user=centos
 
     - name: wait for ssh to be available
       wait_for: host={{ public_v4 }} port=22 state=started
