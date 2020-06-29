@@ -1,0 +1,12 @@
+- hosts: localhost
+  connection: local
+  vars:
+    ansible_python_interpreter: python
+    image_name: Ubuntu-20.04
+    flavor_ram: 2048
+    volume_size: 10
+    extra_security_groups:
+      - VPN
+  tasks:
+    - name: deploy system
+      include_tasks: deploy.yml

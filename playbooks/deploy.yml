@@ -2,29 +2,45 @@
   connection: local
   vars:
     ansible_python_interpreter: python
+    security_groups:
+      - default
   tasks:
+
+    - name: set default image name
+      set_fact:
+        image_name: CentOS-7
+      when: image_name is undefined
+
+    - name: identify username from image name
+      set_fact:
+        user_name: "{{ image_name | regex_replace('^([a-zA-Z]+)[-0-9].*$', '\\1') | lower }}" 
 
     - name: initialize a volume
       os_volume:
         name: "{{ host_name }}_os"
         state: present
-        image: CentOS-7
+        image: "{{ image_name | default('CentOS-7') }}"
         size: "{{ volume_size | default(20) }}"
       register: example_volume
+
+    - name: include additional security groups
+      set_fact:
+        security_groups: "{{ security_groups + [item] }}"
+      with_items: "{{ extra_security_groups }}"
+      when:
+        - extra_security_groups is defined
 
     - name: launch an instance
       os_server:
         name: "{{ host_name }}"
         state: present
-        flavor_ram: 4096
+        flavor_ram: "{{ flavor_ram | default('4096') }}"
         key_name: "{{ key_name }}"
         terminate_volume: yes
         boot_volume: "{{ host_name }}_os"
         nics:
           - net-name: public
-        security_groups:
-          - Seed Box
-          - default
+        security_groups: "{{ security_groups }}"
       register: example_server
 
     - name: get facts about the server (including its public v4 IP address)
@@ -38,7 +54,7 @@
         public_v4: "{{ example_server.server.public_v4 }}"
 
     - name: add the server to our ansible inventory
-      add_host: hostname={{ public_v4 }} groups=web ansible_ssh_user=centos
+      add_host: hostname={{ public_v4 }} groups=web ansible_ssh_user={{ user_name }}
 
     - name: wait for ssh to be available
       wait_for: host={{ public_v4 }} port=22 state=started
